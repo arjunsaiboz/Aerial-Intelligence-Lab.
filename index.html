@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aerial Intelligence Lab – Coming Soon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --yellow: #f5c800;
+      --gray: #b0b0b0;
+      --dark: #000000;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--dark);
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+      color: #fff;
+    }
+
+    /* ── Full-screen logo ── */
+    .bg {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 0;
+    }
+    .bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.55;
+      filter: brightness(0.7) contrast(1.1);
+      animation: slowFloat 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes slowFloat {
+      from { transform: scale(1.00); }
+      to   { transform: scale(1.06); }
+    }
+
+    /* ── Vignette overlay ── */
+    .vignette {
+      position: fixed; inset: 0; z-index: 1;
+      background: radial-gradient(ellipse at center,
+        transparent 30%,
+        rgba(0,0,0,0.70) 75%,
+        rgba(0,0,0,0.95) 100%);
+    }
+
+    /* ── Scanline texture ── */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 2;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,0.06) 3px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+    }
+
+    /* ── Content ── */
+    .content {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 0;
+    }
+
+    /* Top label */
+    .label {
+      letter-spacing: 0.45em;
+      font-size: clamp(0.65rem, 1.2vw, 0.9rem);
+      color: var(--yellow);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 1.6rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.3s ease forwards;
+    }
+
+    /* COMING SOON */
+    .coming-soon {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 16vw, 14rem);
+      line-height: 0.88;
+      letter-spacing: 0.04em;
+      background: linear-gradient(160deg, #ffffff 30%, var(--yellow) 70%, var(--gray) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(245,200,0,0.35));
+      opacity: 0;
+      animation: fadeUp 0.9s 0.55s ease forwards;
+    }
+
+    /* Divider */
+    .divider {
+      width: clamp(120px, 30vw, 400px);
+      height: 2px;
+      margin: 2.2rem auto;
+      background: linear-gradient(to right, transparent, var(--yellow), transparent);
+      opacity: 0;
+      animation: fadeIn 0.8s 0.9s ease forwards;
+    }
+
+    /* Slogan */
+    .slogan {
+      font-size: clamp(0.8rem, 2vw, 1.18rem);
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.75);
+      max-width: 640px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.1s ease forwards;
+    }
+    .slogan strong {
+      color: var(--yellow);
+      font-weight: 600;
+    }
+
+    /* ── Top-left logo ── */
+    .logo-mark {
+      position: fixed;
+      top: 30px; left: 30px;
+      z-index: 20;
+      width: 90px; height: 90px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s ease forwards;
+    }
+    .logo-mark img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+    }
+
+    /* Animated corner accents */
+    .corner {
+      position: fixed; z-index: 11;
+      width: 48px; height: 48px;
+      opacity: 0.55;
+      animation: fadeIn 1.2s 1.4s ease forwards;
+    }
+    .corner--tl { top: 22px; left: 22px; border-top: 2px solid var(--yellow); border-left: 2px solid var(--yellow); }
+    .corner--tr { top: 22px; right: 22px; border-top: 2px solid var(--yellow); border-right: 2px solid var(--yellow); }
+    .corner--bl { bottom: 22px; left: 22px; border-bottom: 2px solid var(--yellow); border-left: 2px solid var(--yellow); }
+    .corner--br { bottom: 22px; right: 22px; border-bottom: 2px solid var(--yellow); border-right: 2px solid var(--yellow); }
+
+    /* Bottom brand */
+    .brand-bar {
+      position: fixed;
+      bottom: 36px;
+      left: 0;
+      right: 0;
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.5s ease forwards;
+    }
+    .brand-bar span {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+    }
+    .brand-bar .dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--yellow); opacity: 0.6;
+    }
+
+    /* Particle ring */
+    .ring {
+      position: fixed; inset: 0; z-index: 3;
+      pointer-events: none;
+    }
+    .ring svg {
+      width: 100%; height: 100%;
+    }
+    .ring-circle {
+      stroke: var(--yellow);
+      stroke-width: 0.5;
+      fill: none;
+      stroke-dasharray: 8 14;
+      opacity: 0.18;
+      transform-origin: center;
+      animation: spinRing 30s linear infinite;
+    }
+    @keyframes spinRing {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Keyframes */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 0.55; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top-left logo -->
+  <div class="logo-mark">
+    <img src="/logo.png" alt="AIL Logo" />
+  </div>
+
+  <!-- Overlays -->
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+
+  <!-- Decorative ring -->
+  <div class="ring">
+    <svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+      <circle class="ring-circle" cx="500" cy="500" r="340"/>
+      <circle class="ring-circle" cx="500" cy="500" r="420" style="stroke:#888;animation-direction:reverse;animation-duration:45s"/>
+    </svg>
+  </div>
+
+  <!-- Corner accents -->
+  <div class="corner corner--tl"></div>
+  <div class="corner corner--tr"></div>
+  <div class="corner corner--bl"></div>
+  <div class="corner corner--br"></div>
+
+  <!-- Main content -->
+  <div class="content">
+    <p class="label">Aerial Intelligence Lab &nbsp;·&nbsp; Launching Soon</p>
+    <h1 class="coming-soon">COMING<br>SOON</h1>
+    <div class="divider"></div>
+    <p class="slogan">
+      <strong>AI-powered</strong> autonomous UAV systems for precision,<br>
+      security, and next-generation aerial technology.
+    </p>
+  </div>
+
+  <!-- Bottom brand -->
+  <div class="brand-bar">
+    <span>Aerial Intelligence Lab</span>
+    <div class="dot"></div>
+    <span>AILab &copy; 2026</span>
+  </div>
+
+</body>
+</html>
